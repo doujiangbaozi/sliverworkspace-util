@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#-*-coding:utf-8-*-
+# -*- coding: utf-8 -*-
 
 __author__ = '豆浆包子'
 __all__    = ['SvAnnotationFilter', 'filter', 'doFilter','usage']

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*-coding:utf-8-*-
+# -*- coding: utf-8 -*-
 
 __author__ = '豆浆包子'
 __all__    = ['CnvAnnotationFilter', 'filter', 'doFilter','usage']

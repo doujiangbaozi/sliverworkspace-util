@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*-coding:utf-8-*-
+# -*- coding: utf-8 -*-
 from __future__ import division
 __author__ = '豆浆包子'
 __all__    = ['MatchedSnvVepAnnotationFilter', 'process', 'doProcess','usage']
