@@ -1,0 +1,17 @@
+version: "3.7"
+services:
+  Project:
+    image: sliverworkspace-base:latest
+    container_name: Project
+    volumes:
+      - /media/sliver/Data/data:/opt/data:rw                                  #挂载输入数据目录
+      - /media/sliver/Manufacture/Project/envs:/root/mambaforge-pypy3/envs:rw #挂载envs目录
+      - /media/sliver/Manufacture/Project/config:/opt/config:rw               #挂载config目录:软件yaml配置文件
+      - /media/sliver/Manufacture/sliver/ref:/opt/ref:rw                      #挂载reference目录
+      - /media/sliver/Manufacture/Project/result:/opt/result:rw               #挂载中间文件和输出目录
+    #ports:
+    #  - "9022:9022"      # ssh连接端口
+    network_mode: "host" #网络模式为host，注意端口与服务器端口不能冲突
+    environment:
+      - TZ=Asia/Shanghai #设置时区，方式时间不对
+      - PS=20191124

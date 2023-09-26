@@ -1,0 +1,11 @@
+.history/
+.svn/
+.vscode/
+.VSCodeCounter/
+.gitignore
+rna/
+deprecated/
+log/
+test/
+vcf/
+docker/.condarc
