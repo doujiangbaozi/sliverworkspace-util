@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*-coding:utf-8-*-
+# -*- coding: utf-8 -*-
 
 __author__ = '豆浆包子'
 __all__    = [
@@ -14,8 +14,10 @@ __all__    = [
 ]
 
 import os,sys,pandas,numpy,getopt,logging,time,subprocess,random,gzip
-reload(sys)
-sys.setdefaultencoding("utf-8")
+
+#for python2.7x
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
 
 class FastqGenerator(object):
     """ 
@@ -386,7 +388,7 @@ class FastqGenerator(object):
         print('-v, --version\t显示版本号')
         print('--document\t显示开发文档')
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,5 @@
-#!/root/mambaforge-pypy3/envs/gatk/bin/python
-#-*-coding:utf-8-*-
-import os,sys,collections,pandas,numpy,getopt,logging,json
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 __author__ = '豆浆包子'
 __all__    = [
@@ -13,6 +12,7 @@ __all__    = [
     'usage'
 ]
 
+import os,sys,collections,pandas,numpy,getopt,logging,json
 
 class GermlineQcUtil(object):
     """ 
@@ -297,7 +297,7 @@ class GermlineQcUtil(object):
         print('-h, --help\t\t显示帮助')
         print('-d, --document\t\t显示开发文档')
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 
 if __name__ == '__main__':

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from __future__ import division
+
 __author__ = '豆浆包子'
 __all__    = ['MatchedSnvVepAnnotationFilter', 'process', 'doProcess','usage']
 
@@ -191,16 +193,19 @@ class MatchedSnvVepAnnotationFilter(object):
 
             self.vcf_data            = self.vcf_data[['CHROM','START','REF','ALT','DP','VAF','TLOD','FILTER']]
             
+            cols      = self.processAnnoCols(anno)
             anno_data = pandas.read_csv(
                 anno,
-                header=0,
-                names=[
-                    'Uploaded_variation','Location','Allele','Gene','Feature','Feature_type','Consequence','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','IMPACT','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL','SYMBOL_SOURCE','HGNC_ID','BIOTYPE','CANONICAL','MANE_SELECT','MANE_PLUS_CLINICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','REFSEQ_MATCH','REFSEQ_OFFSET','GIVEN_REF','USED_REF','BAM_EDIT','GENE_PHENO','SIFT','PolyPhen','EXON','INTRON','DOMAINS','miRNA','HGVSc','HGVSp','HGVS_OFFSET','AF','AFR_AF','AMR_AF','EAS_AF','EUR_AF','SAS_AF','AA_AF','EA_AF','gnomAD_AF','gnomAD_AFR_AF','gnomAD_AMR_AF','gnomAD_ASJ_AF','gnomAD_EAS_AF','gnomAD_FIN_AF','gnomAD_NFE_AF','gnomAD_OTH_AF','gnomAD_SAS_AF','MAX_AF','MAX_AF_POPS','CLIN_SIG','SOMATIC','PHENO','PUBMED','MOTIF_NAME','MOTIF_POS','HIGH_INF_POS','MOTIF_SCORE_CHANGE','TRANSCRIPTION_FACTORS'
-                ],
+                header=None,
+                names=cols,
+                #names=[
+                #    'Uploaded_variation','Location','Allele','Gene','Feature','Feature_type','Consequence','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation','IMPACT','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL','SYMBOL_SOURCE','HGNC_ID','BIOTYPE','CANONICAL','MANE_SELECT','MANE_PLUS_CLINICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','REFSEQ_MATCH','REFSEQ_OFFSET','GIVEN_REF','USED_REF','BAM_EDIT','GENE_PHENO','SIFT','PolyPhen','EXON','INTRON','DOMAINS','miRNA','HGVSc','HGVSp','HGVS_OFFSET','AF','AFR_AF','AMR_AF','EAS_AF','EUR_AF','SAS_AF','gnomADe_AF','gnomADe_AFR_AF','gnomADe_AMR_AF','gnomADe_ASJ_AF','gnomADe_EAS_AF','gnomADe_FIN_AF','gnomADe_NFE_AF','gnomADe_OTH_AF','gnomADe_SAS_AF','gnomADg_AF','gnomADg_AFR_AF','gnomADg_AMI_AF','gnomADg_AMR_AF','gnomADg_ASJ_AF','gnomADg_EAS_AF','gnomADg_FIN_AF','gnomADg_MID_AF','gnomADg_NFE_AF','gnomADg_OTH_AF','gnomADg_SAS_AF','MAX_AF','MAX_AF_POPS','CLIN_SIG','SOMATIC','PHENO','PUBMED','MOTIF_NAME','MOTIF_POS','HIGH_INF_POS','MOTIF_SCORE_CHANGE','TRANSCRIPTION_FACTORS'
+                #],
                 sep='\t',
                 skip_blank_lines=True,
                 comment='#'
             )
+            print(anno_data)
             anno_data = anno_data.apply(lambda row:self.processAnnotation(row),     axis=1)
             anno_data = anno_data.apply(lambda row:self.processAdjustVariation(row),axis=1)
             
@@ -262,6 +267,16 @@ class MatchedSnvVepAnnotationFilter(object):
             emptyFile = open(out,'w')
             emptyFile.write('')
             emptyFile.close()
+    
+    def processAnnoCols(self,filename):
+        with open(filename,'r') as f:
+            for line in f:
+                if not line.startswith('##') and line.startswith('#'):
+                    header = line[1:len(line)-2].split('\t')
+                    print(header)
+                    return header
+                else:
+                    continue
     
     def filterTLOD(self,str_tlod):
         lods = str_tlod.split(',')
@@ -494,6 +509,7 @@ class MatchedSnvVepAnnotationFilter(object):
                 row['pHGVS'] = '-'
             return row
         except Exception as e:
+            print(row)
             print(e)
             return None
 
@@ -617,7 +633,7 @@ class MatchedSnvVepAnnotationFilter(object):
         print('-h, --help\t\t显示帮助')
         print('-d, --document\t\t显示开发文档')
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
         '''
         python MatchedSnvVepAnnotationFilter.py  \

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 __author__ = '豆浆包子'
@@ -42,17 +42,19 @@ class SvAnnotationFilter(object):
           print('[-f]或[--file]参数值 %s 不是一个有效的文件(以%s结尾)' %(value,'.vcf 或 .vcf.gz'))
           sys.exit()
       elif arg=="-o" or arg == "--out":
-        if value.endswith('.xls'):
+        if value.endswith('.tsv'):
           self.out = value
           if os.path.isfile(value) :
             self.log.warn('[-o]或[--out]参数值 %s 文件已经存在，输出结果将覆盖该文件' %(value))
         else:
-          print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' %(value,'.xls'))
+          print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' %(value,'.tsv'))
+          sys.exit()
       elif arg=="-r" or arg == "--ref":
         if os.path.isfile(value):
           self.refGene = value
         else:
           print('[-r]或[--ref]参数值 %s 不是一个有效的文件' %(value))
+          sys.exit()
       elif arg=="-s" or arg == "--score":
         pattern = re.compile(r'^[-+]?[0-9]+\.[0-9]+$')
         result = pattern.match(value)
@@ -60,6 +62,7 @@ class SvAnnotationFilter(object):
           self.cutoff = float(value)
         else:
           print('[-s]或[--score]参数值 %s 不是一个有效的数值 ' %(value))
+          sys.exit()
       elif arg=="-h" or arg == "--help":
         self.usage()
         sys.exit()
@@ -223,7 +226,7 @@ class SvAnnotationFilter(object):
           field = chr.lower()
           if field.find('chr') != -1:
               return field[field.find('chr')+len('chr'):].upper()
-      except Exception,e:
+      except Exception as e:
           print(e)
           return 'NAN'
   
@@ -335,19 +338,19 @@ class SvAnnotationFilter(object):
     '''
     print('Usage : ./SvAnnotationFilter [OPTION]... 或者 python SvAnnotationFilter [OPTION]')
     print('''
-      用于处理变异注释文件.vcf.gz格式，过滤其中有效变异，与样本编号相符条件，输出格式为.xls
-      Example: ./SvAnnotationFilter.py -r /opt/ref/hg19_refGene.txt -s 200 -f B1701/results/variants/somaticSV.vcf.gz -o result/1701.result.SV.xls
+      用于处理变异注释文件.vcf.gz格式，过滤其中有效变异，与样本编号相符条件，输出格式为.tsv
+      Example: ./SvAnnotationFilter.py -r /opt/ref/hg19_refGene.txt -s 200 -f B1701/results/variants/somaticSV.vcf.gz -o result/1701.result.SV.tsv
     ''')
     print('''部分使用方法及参数如下：\n''')
     print('-f, --file=\t处理一个扩展名为vcf或vcf.gz的文件')
-    print('-o, --out=\t处理结果输出文件,扩展名为.xls')
+    print('-o, --out=\t处理结果输出文件,扩展名为.tsv')
     print('-r, --ref=\t引用基因组文件 hg19_refGene.txt')
     print('-s, --score=\t过滤参数，score数值')
     print('-h, --help\t显示帮助')
     print('-v, --version\t显示版本号')
     print('--document\t显示开发文档')
     print('\n')
-    print('提交bug,to <6041738@qq.com>.\n')
+    print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 
 if __name__ == '__main__':

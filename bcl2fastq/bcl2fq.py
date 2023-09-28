@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#-*-coding:utf-8-*-
-
+# -*- coding: utf-8 -*-
 __author__ = '豆浆包子'
 __all__    = ['bcl2fq', 'downSampleSheet', 'execute','usage']
 
@@ -8,8 +7,10 @@ __all__    = ['bcl2fq', 'downSampleSheet', 'execute','usage']
 import os,sys,csv,getopt,io,requests,json,subprocess,time,tempfile
 from multiprocessing import cpu_count
 from configparser    import ConfigParser
-reload(sys)
-sys.setdefaultencoding("utf-8")
+
+#for python2.7
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
 
 
 class bcl2fq(object):
@@ -22,14 +23,7 @@ class bcl2fq(object):
         初始化,获取运行参数
         """
         try:
-            #print('__file__:', __file__)
-            #print('realpath of __file__:', os.path.realpath(__file__))
-            #print('sys.executable:', sys.executable)
-            #print('realpath of sys.executable:', os.path.realpath(sys.executable)[:os.path.realpath(sys.executable).rfind('/')])
-            #print('sys.argv[0]:', sys.argv[0])
-            #print('realpath of sys.argv[0]:', os.path.realpath(sys.argv[0]))
-            #print('sys.path[0]:', sys.path[0])
-            #print('realpath of sys.path[0]:', os.path.realpath(sys.path[0]))
+            
             cfg = ConfigParser()
             
             if os.path.exists(os.path.dirname(os.path.realpath(sys.argv[0]))+os.sep+'configuration.cfg'):
@@ -209,10 +203,6 @@ class bcl2fq(object):
         try:
             query = self.query % self.args
             print(query)
-            # 得到一个临时文件对象， 调用close后，此文件从磁盘删除
-            #out_temp = tempfile.TemporaryFile(mode='w+')
-            # 获取临时文件的文件号
-            #fileno = out_temp.fileno()
             sub = subprocess.Popen(query,shell=True,cwd=os.path.expanduser(workingDir),stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
             while sub.poll() is None:
                 line = sub.stdout.readline()
@@ -221,14 +211,8 @@ class bcl2fq(object):
                     print(line)
                 if sub.returncode == 0:
                     print('Demultiplex Run Succeed')
-            #sub.wait()
-            #out_temp.seek(0)
-            #print(out_temp.read())
         except Exception as e:
             print(str(e))
-        #finally:
-            #if out_temp:
-            #    out_temp.close()
         stop  = time.time()
         print('Run time:'+str(round((stop-start),3))+' seconds')
     
@@ -324,7 +308,7 @@ class bcl2fq(object):
         print("   --no-lane-splitting\t Do not split FASTQ files by lane.")
         print("   --barcode-mismatches\t Number of allowed mismatches per index Multiple entries, comma delimited allowed. Each entry is applied to the corresponding index; last entry applies to all remaining indexes.Default: 1. Accepted values: 0, 1 or 2.")
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 if __name__=="__main__":
     bcl2fq = bcl2fq()

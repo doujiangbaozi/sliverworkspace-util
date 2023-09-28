@@ -22,9 +22,9 @@ class CnvAnnotationFilter(object):
         self.extension  = ".call.cns"
         
         self.refGene    = None #'/opt/ref/hg19_regGene.txt'
-        self.min        = None #-0.5
-        self.max        = None # 0.5
-        self.depth      = None # 500
+        self.min        = -0.5 #-0.5 默认值
+        self.max        =  0.5 # 0.5 默认值
+        self.depth      =  500 # 500 默认值
         self.file       = None #cnvkit 输出文件B1701_sorted.call.cns
         self.out        = None #输出文件
         self.bed        = None #输出最终结果bed文件，用于图像生成（可选）
@@ -132,7 +132,7 @@ class CnvAnnotationFilter(object):
             return 'CNV loss'
 
     def calculateCopyNumber(self,log2):
-        return int(2**(log2))
+        return 2**(log2+0.5)
 
     def calculateExon(self,row):
         startIndex = None
@@ -155,10 +155,17 @@ class CnvAnnotationFilter(object):
             
             _starts = []
             _ends   = []
+            
             for ts in exonStarts:
-                _starts.append(int(ts))
+                try:
+                    _starts.append(int(ts))
+                except ValueError:
+                    print('转换错误')
             for te in exonEnds:
-                _ends.append(int(te))
+                try:
+                    _ends.append(int(te))
+                except ValueError:
+                    print('转换错误')
             
             #_starts.sort()
             #_ends.sort()
@@ -227,7 +234,7 @@ class CnvAnnotationFilter(object):
             if not data.empty:
                 data['type']   = data.apply(lambda row:self.calculateType(row['log2']),axis=1)
                 data['region'] = data.apply(lambda row:self.calculateExon(row),axis=1)
-                #data['number'] = data.apply(lambda row:self.calculateCopyNumber(row['log2']),axis=1)
+                #data['num']    = data.apply(lambda row:self.calculateCopyNumber(row['log2']),axis=1)
                 data.drop(['log2','depth','probes','weight'],axis=1,inplace=True)
                 #print(data)
                 data = data[['chromosome','start','end','gene','region','type','cn']]
@@ -273,7 +280,7 @@ class CnvAnnotationFilter(object):
         print('-v, --version\t显示版本号')
         print('--document\t显示开发文档')
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 
 if __name__ == '__main__':

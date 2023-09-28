@@ -29,7 +29,7 @@ class VcfProcessUtil(object):
         self.log    = logging.getLogger(__name__)
 
         self.data   = None
-        self.header = None
+        self.header = ''
         self.skip   = 0
 
         try:
@@ -98,9 +98,9 @@ class VcfProcessUtil(object):
             if filename.endswith('.vcf.gz'):
                 self.data = pandas.read_csv(
                     filename,
-                    skiprows=self.skip, 
+                    skiprows=self.skip-1, 
                     #converters={'#CHROM':str},
-                    header=0,
+                    header=self.skip-1,
                     sep='\t',
                     compression ='gzip',
                     #skip_blank_lines=True,
@@ -109,9 +109,9 @@ class VcfProcessUtil(object):
             else:
                 self.data = pandas.read_csv(
                     filename,
-                    skiprows=self.skip, 
+                    skiprows=self.skip-1, 
                     #converters={'#CHROM':str},
-                    header=0,
+                    header=self.skip-1,
                     sep='\t',
                     #skip_blank_lines=True,
                     engine='c'
@@ -134,7 +134,7 @@ class VcfProcessUtil(object):
                     sep='\t',
                     index=False,
                     encoding='utf-8',
-                    header=0,
+                    header=False,
                     mode='a'
                 )
             elif output.endswith('.vcf'):
@@ -147,7 +147,7 @@ class VcfProcessUtil(object):
                     sep='\t',
                     index=False,
                     encoding='utf-8',
-                    header=0,
+                    header=False,
                     mode='a'
                 )
         
@@ -163,7 +163,7 @@ class VcfProcessUtil(object):
             with open(filename,'r') as f:
                 for line in f:
                     li = line.decode('utf-8')
-                    if li.startswith('##'):
+                    if li.startswith('#'):
                         self.skip=self.skip+1
                         if li.startswith('##contig='):
                             continue
@@ -174,7 +174,7 @@ class VcfProcessUtil(object):
             with gzip.open(filename,'r') as f:
                 for line in f:
                     li = line.decode('utf-8')
-                    if li.startswith('##'):
+                    if li.startswith('#'):
                         self.skip=self.skip+1
                         if li.startswith('##contig='):
                             continue
@@ -188,10 +188,10 @@ class VcfProcessUtil(object):
             修改CHROM字段，序号前加chr
         '''
         ch = str(chrom)
-        if not (ch.startswith('MT') or ch.startswith('NW')) :
-            return 'chr'+ch
-        elif ch.startswith('chr'):
+        if ch.startswith('chr'):
             return ch
+        elif not (ch.startswith('MT') or ch.startswith('NW')) :
+            return 'chr'+ch
         return ch
 
 

@@ -397,7 +397,7 @@ class MatchedQcProcessor(object):
         print('-h, --help\t显示帮助')
         print('-d, --document\t显示开发文档')
         print('\n')
-        print('提交bug,to <6041738@qq.com>.\n')
+        print('提交bug,to <6041738@qq.com>. 网站:https://sliverworkspace.com \n')
 
 
 if __name__ == '__main__':
