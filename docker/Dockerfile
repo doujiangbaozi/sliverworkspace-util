@@ -1,7 +1,7 @@
 FROM        ubuntu:20.04
 ENV         LC_ALL=C TZ=Asia/Shanghai PS=20201110 PT=9026
 RUN         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-            apt update && apt upgrade -y && apt install openssh-server language-pack-zh-hans language-pack-zh-hans-base aria2 curl -y && apt autoremove -y
+            apt update && apt upgrade -y && apt install openssh-server language-pack-zh-hans language-pack-zh-hans-base aria2 -y && apt autoremove -y
 RUN         sed -i "s/#PermitEmptyPasswords no/PermitEmptyPasswords no/g" /etc/ssh/sshd_config && \
             sed -i "s/#PermitRootLogin prohibit-password/PermitRootLogin yes/g" /etc/ssh/sshd_config && \
             sed -i "s/#ListenAddress 0.0.0.0/ListenAddress 0.0.0.0/g" /etc/ssh/sshd_config && \
