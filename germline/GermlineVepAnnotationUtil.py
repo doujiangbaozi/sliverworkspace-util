@@ -161,10 +161,9 @@ class GermlineVepAnnotationUtil(object):
             #获取CLIN_SIG注释结果含有pathogenic字段，减少后续运算量
             anno_data             = anno_data.apply(lambda row:self.calculateAnnotationPosition(row),axis=1)
             anno_data['Start']    = anno_data['Start'].astype('int64')
-            print(anno_data)
             
             self.vcf_data         = self.vcf_data.apply(lambda row: self.processVcfWithAnnotation(row,anno_data),axis=1)
-
+            print(self.vcf_data)
             index = [
                 'Chr', 'Start', 'End', 'Ref', 'Alt', 'DP', 'VAF', 'Gene_ID', 'Gene', 'Type', 'Transcript', 'Exon', 'cHGVS', 'pHGVS', 'CLNSIG',
                 'Existing_variation', 'BioType', 'PUBMED'
@@ -201,7 +200,7 @@ class GermlineVepAnnotationUtil(object):
         with open(filename,'r') as f:
             for line in f:
                 if not line.startswith('##') and line.startswith('#'):
-                    header = line[1:len(line)-2].split('\t')
+                    header = line[1:len(line)-1].split('\t')
                     print(header)
                     return header
                 else:
@@ -305,7 +304,7 @@ class GermlineVepAnnotationUtil(object):
                     row['cHGVS']              = r['HGVSc'] # if r['HGVSc'].find(':')==-1 else r['HGVSc'].split(':')[1]
                     row['pHGVS']              = r['HGVSp'] # if r['HGVSp'].find(':')==-1 else r['HGVSp'].split(':')[1]
                     row['Gene_ID']            = r['Gene']
-                    row['Existing_variation'] = r['Existing_variation_1']
+                    row['Existing_variation'] = r['Existing_variation']
                     row['BioType']            = r['BIOTYPE']
                     row['CLNSIG']             = r['CLIN_SIG']
                     row['PUBMED']             = r['PUBMED']
