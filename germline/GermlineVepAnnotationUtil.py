@@ -41,7 +41,7 @@ class GermlineVepAnnotationUtil(object):
             self.opts = getopt.getopt(
                 sys.argv[1:],
                 "a:o:v:dh",
-                ["annotation=", "whitelist=", "out=", "vcf=","min-depth=", "document", "help"]
+                ["annotation=", "out=", "vcf=","min-depth=", "document", "help"]
             )
         except getopt.GetoptError:
             print('错误：请检查您的输入参数是否正确\n\n')
@@ -60,21 +60,6 @@ class GermlineVepAnnotationUtil(object):
                 else:
                     print('[-v]或[--vcf]参数值 %s 不是一个有效的文件(以%s结尾)' % (value, '.vcf 或 .vcf.gz'))
                     sys.exit()
-            elif arg == "--whitelist":
-                if os.path.isfile(value):
-                    self.whitelist = value
-                    self.datalist = pandas.read_csv(
-                        self.whitelist,
-                        names=['GENE', 'VARIANT'],
-                        sep=',',
-                        skip_blank_lines=True,
-                        header=0,
-                        comment='#'
-                    )
-                    print(self.datalist)
-                else:
-                    print('[--whitelist]参数值 %s 不是一个有效的数据文件' % (value))
-                    sys.exit()
             elif arg == "-a" or arg == "--annotation":
                 if os.path.isfile(value):
                     self.anno = value
@@ -82,13 +67,13 @@ class GermlineVepAnnotationUtil(object):
                     print('[-a]或[--annotation]参数值 %s 不是一个有效的Annovar注释输出文件' % (value))
                     sys.exit()
             elif arg == "-o" or arg == "--out":
-                if value.endswith('.xls'):
+                if value.endswith('.tsv'):
                     self.out = value
                     if os.path.isfile(value):
                         self.log.warn(
                             '[-o]或[--out]参数值 %s 文件已经存在，输出结果将覆盖该文件' % (value))
                 else:
-                    print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' % (value, '.xls'))
+                    print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' % (value, '.tsv'))
             elif arg == "--min-depth":
                 if value.isdigit():
                     self.depth = int(value)
@@ -99,13 +84,10 @@ class GermlineVepAnnotationUtil(object):
                 self.usage()
                 sys.exit()
             elif arg == "-d" or arg == "--document":
-                import GermlineVepAnnotationUtil
+                import germline.GermlineVepAnnotationUtil as GermlineVepAnnotationUtil
                 help(GermlineVepAnnotationUtil)
                 sys.exit()
         ps_stats = False
-        #if self.whitelist is None:
-        #    print('[--whitelist]参数值不能为空')
-        #    ps_stats = True
         if self.vcf is None:
             print('[-v]或[--vcf]参数值不能为空')
             ps_stats = True
@@ -167,12 +149,11 @@ class GermlineVepAnnotationUtil(object):
             self.vcf_data          = self.vcf_data[self.vcf_data['FILTER'] == 'PASS']
             print(self.vcf_data)
 
+            cols      = self.processAnnoCols(anno)
             anno_data = pandas.read_csv(
                 anno,
                 header=0,
-                names=[
-                    '#Uploaded_variation','Location','Allele','Gene','Feature','Feature_type','Consequence','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation_1','Existing_variation_2','DISTANCE','STRAND','FLAGS','VARIANT_CLASS','SYMBOL','SYMBOL_SOURCE','HGNC_ID','BIOTYPE','CANONICAL','MANE_SELECT','MANE_PLUS_CLINICAL','TSL','APPRIS','CCDS','ENSP','SWISSPROT','TREMBL','UNIPARC','UNIPROT_ISOFORM','GENE_PHENO','SIFT','PolyPhen','EXON','INTRON','DOMAINS','miRNA','HGVSc','HGVSp','HGVS_OFFSET','AF','AFR_AF','AMR_AF','EAS_AF','EUR_AF','SAS_AF','gnomADe_AF','gnomADe_AFR_AF','gnomADe_AMR_AF','gnomADe_ASJ_AF','gnomADe_EAS_AF','gnomADe_FIN_AF','gnomADe_NFE_AF','gnomADe_OTH_AF','gnomADe_SAS_AF','gnomADg_AF','gnomADg_AFR_AF','gnomADg_AMI_AF','gnomADg_AMR_AF','gnomADg_ASJ_AF','gnomADg_EAS_AF','gnomADg_FIN_AF','gnomADg_MID_AF','gnomADg_NFE_AF','gnomADg_OTH_AF','gnomADg_SAS_AF','MAX_AF','MAX_AF_POPS','CLIN_SIG','SOMATIC','PHENO','PUBMED','MOTIF_NAME','MOTIF_POS','HIGH_INF_POS','MOTIF_SCORE_CHANGE','TRANSCRIPTION_FACTORS'
-                ],
+                names=cols,
                 sep='\t',
                 skip_blank_lines=True,
                 comment='#'
@@ -194,18 +175,11 @@ class GermlineVepAnnotationUtil(object):
 
             if self.depth is not None:
                 self.vcf_data = self.vcf_data[self.vcf_data['DP'] >= self.depth]
-
-            # 匹配突变数据库中的基因
-            if self.whitelist is not None:
-                self.vcf_data['WHITELIST'] = self.vcf_data.apply(lambda row: self.matchWhiteList(row['Gene']), axis=1)
-                self.vcf_data = self.vcf_data[self.vcf_data['WHITELIST'] == True]
-                self.vcf_data.drop(['WHITELIST'], axis=1, inplace=True)
-            
             
             self.vcf_data         = self.vcf_data[self.vcf_data['CLNSIG'].apply(lambda x: str(x).find('pathogenic') != -1)]
             self.vcf_data         = self.vcf_data[self.vcf_data['Chr'].notnull()]
             self.vcf_data         = self.vcf_data[self.vcf_data['Start'].notnull()]
-            self.vcf_data['Start']=self.vcf_data['Start'].astype('int64')
+            self.vcf_data['Start']= self.vcf_data['Start'].astype('int64')
 
             #输出匹配结果
             if not self.vcf_data.empty:
@@ -223,6 +197,16 @@ class GermlineVepAnnotationUtil(object):
             emptyFile.write('')
             emptyFile.close()
 
+    def processAnnoCols(self,filename):
+        with open(filename,'r') as f:
+            for line in f:
+                if not line.startswith('##') and line.startswith('#'):
+                    header = line[1:len(line)-2].split('\t')
+                    print(header)
+                    return header
+                else:
+                    continue
+    
     def calculateVAF(self, row):
         '''根据row/行数据计算该行的突变频率'''
         try:
@@ -366,26 +350,23 @@ class GermlineVepAnnotationUtil(object):
         print(
             'Usage : ./GermlineVepAnnotationUtil [OPTION]... 或者 python GermlineVepAnnotationUtil [OPTION]')
         print('''
-            根据vcf文件，annotation注释输出结果，输出最终分析结果文件，格式为.xls
+            根据vcf文件，annotation注释输出结果，输出最终分析结果文件，格式为.tsv
             Example:\t
                 ./GermlineVepAnnotationUtil.py \\
-                    --whitelist=/opt/deaf/whitelist.csv \\
                     -v result/SRR9993256_filtered.vcf \\
-                    -a result/SRR9993256_filtered_vep.xls \\
-                    -o result/SRR9993256.result.xls
+                    -a result/SRR9993256_filtered_vep.tsv \\
+                    -o result/SRR9993256.result.tsv
             或者\t
                 python GermlineVepAnnotationUtil.py \\
-                    --whitelist=/opt/deaf/whitelist.csv \\
                     --vcf=/opt/result/SRR9993256_filtered.vcf \\
-                    --annotation=/opt/result/SRR9993256_filtered_vep.xls \\
-                    --out=/opt/result/SRR9993256.result.xls
+                    --annotation=/opt/result/SRR9993256_filtered_vep.tsv \\
+                    --out=/opt/result/SRR9993256.result.tsv
         ''')
         print('''部分使用方法及参数如下：\n''')
         print('-v, --vcf=\t\t输入vcf或vcf.gz格式文件')
         print('-a, --annotation=\t\t输入annotation注释后的文件')
         print('-o, --out=\t\t输出处理过的结果文件')
         print('    --min-depth=\t最小测序深度该突变位点最小reads数（可选）')
-        print('    --whitelist=\t\t突变过滤数据文件，如耳聋基因及突变位点')
         print('-h, --help\t\t显示帮助')
         print('-d, --document\t\t显示开发文档')
         print('\n')

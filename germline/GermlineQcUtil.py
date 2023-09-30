@@ -65,12 +65,12 @@ class GermlineQcUtil(object):
         #获取命令行参数值
         for arg, value in self.opts[0]:
             if arg=="-o" or arg == "--out":
-                if value.endswith('.xls'):
+                if value.endswith('.tsv'):
                     self.out = value
                     if os.path.isfile(value) :
                         self.log.warn('[-o]或[--out]参数值 %s 文件已经存在，输出结果将覆盖该文件' %(value))
                 else:
-                    print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' %(value,'.xls'))
+                    print('[-o]或[--out]参数值 %s 不是一个有效的文件(以%s结尾)' %(value,'.tsv'))
             elif arg == "--sample-fastp":
                 if os.path.isfile(value) and value.endswith('.json'):
                     self.sample_fastp = value
@@ -96,7 +96,7 @@ class GermlineQcUtil(object):
                 self.usage()
                 sys.exit()
             elif arg=="-d" or arg=="--document":
-                import GermlineQcUtil
+                import germline.GermlineQcUtil as GermlineQcUtil
                 help(GermlineQcUtil)
                 sys.exit()
         ps_stats = False
@@ -275,16 +275,16 @@ class GermlineQcUtil(object):
         print('Usage : ./GermlineQcUtil [OPTION]... 或者 python GermlineQcUtil [OPTION]')
         print('''
             根据fastp,bamdst,gatk CollectInsertSizeMetrics(picard)
-            输出质控分析结果文件，扩展名为.xls
+            输出质控分析结果文件，扩展名为.tsv
             Example:
                 ./GermlineQcUtil.py \\
-                    -o /opt/result/2019.result.QC.xls \\
+                    -o /opt/result/2019.result.QC.tsv \\
                     --sample-fastp=/opt/result/2019_fastp.json  \\
                     --sample-bamdst=/opt/result/coverage.report \\
                     --sample-insertsize=/opt/result/2019_insertsize_metrics.txt
             或者:
                 python GermlineQcUtil.py \\
-                    --out=/opt/result/2019.result.QC.xls \\
+                    --out=/opt/result/2019.result.QC.tsv \\
                     --sample-fastp=/opt/result/2019_fastp.json  \\
                     --sample-bamdst=/opt/result/coverage.report \\
                     --sample-insertsize=/opt/result/2019_insertsize_metrics.txt
