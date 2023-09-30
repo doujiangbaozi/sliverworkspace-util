@@ -175,7 +175,7 @@ class GermlineVepAnnotationUtil(object):
             if self.depth is not None:
                 self.vcf_data = self.vcf_data[self.vcf_data['DP'] >= self.depth]
             
-            self.vcf_data         = self.vcf_data[self.vcf_data['CLNSIG'].apply(lambda x: str(x).find('pathogenic') != -1)]
+            self.vcf_data         = self.vcf_data[self.vcf_data['CLNSIG'].apply(lambda x: self.filterPathogenic(x))]
             self.vcf_data         = self.vcf_data[self.vcf_data['Chr'].notnull()]
             self.vcf_data         = self.vcf_data[self.vcf_data['Start'].notnull()]
             self.vcf_data['Start']= self.vcf_data['Start'].astype('int64')
@@ -335,11 +335,15 @@ class GermlineVepAnnotationUtil(object):
     
     
 
-    def filterPathogenic(self,row):
+    def filterPathogenic(self,sig):
         '''
             个过滤注释中pathogenic相关记录
         '''
-        return str(row['CLNSIG']).find('pathogenic')!=-1
+        stats = str(sig).split(',')
+        for stat in stats:
+            if stat=='pathogenic' or stat=='likely_pathogenic' or stat=='pathogenic/likely_pathogenic' or stat=='likely_pathogenic/pathogenic':
+                return True
+        return False
 
 
     def usage(self):
