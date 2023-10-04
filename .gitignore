@@ -10,3 +10,4 @@ test/
 vcf/
 docker/aria2/
 *.pyc
+README.md
