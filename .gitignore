@@ -9,3 +9,4 @@ log/
 test/
 vcf/
 docker/aria2/
+*.pyc
