@@ -1,6 +1,5 @@
 # sliverworkspace-util
 Utils Script With SliverWorkspace Pipelines,Used with Sliverworkspace platform. 
-[web]: 	"https://www.sliverworkspace.com"
 
 Guide Mode
 
