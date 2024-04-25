@@ -194,10 +194,10 @@ class MatchedQcProcessor(object):
             sample_depth       samtools depth 输出文件
             sample_flagstat    samtools flagstat 输出文件
             sample_insertsize  gatk     CollectInsertSizeMetrics 输出文件
-            normal_fastp      fastp    R1,R2输出文件
-            normal_depth      samtools depth 输出文件
-            normal_flagstat   samtools flagstat 输出文件
-            normal_insertsize gatk     CollectInsertSizeMetrics 输出文件
+            normal_fastp       fastp    R1,R2输出文件
+            normal_depth       samtools depth 输出文件
+            normal_flagstat    samtools flagstat 输出文件
+            normal_insertsize  gatk     CollectInsertSizeMetrics 输出文件
         return:
             无返回值
         """
