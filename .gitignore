@@ -8,6 +8,7 @@ deprecated/
 log/
 test/
 vcf/
+germline/projects/*.bed
 docker/aria2/
 *.pyc
 README.md

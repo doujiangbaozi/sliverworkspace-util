@@ -1,5 +1,5 @@
 # sliverworkspace-util
-Utils Script With SliverWorkspace Pipelines,Used with Sliverworkspace platform. 
+Utils Script With SliverWorkspace Pipelines,Used with Sliverworkspace platform.
 
 Guide Mode
 
