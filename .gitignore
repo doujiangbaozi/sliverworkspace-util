@@ -10,5 +10,7 @@ test/
 vcf/
 germline/projects/*.bed
 docker/aria2/
+docker/Mambaforge-pypy3-Linux-x86_64.sh
 *.pyc
 README.md
+
